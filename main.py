@@ -14,7 +14,7 @@ class WebCrawler:
         self.visited.add(url)
 
         try:
-            response = requests.get(url)
+            response = requests.get(url,allow_redirects= True)
             soup = BeautifulSoup(response.text, 'html.parser')
             self.index[url] = soup.get_text()
 
