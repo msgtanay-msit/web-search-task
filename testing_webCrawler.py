@@ -32,15 +32,6 @@ class WebCrawlerTests(unittest.TestCase):
 
         crawler = WebCrawler()
         crawler.crawl("https://example.com")
-    
-    # def test_crawl(self):
-    #     crawler = WebCrawler()
-    #     url1 = "https://www.msit.ac.in/"
-    #     url2 = "https://www.msit.ac.in/about"
-    #     crawler.crawl(url1)
-    #     crawler.crawl(url2, base_url=url1)
-    #     self.assertIn(url1, crawler.visited)
-    #     self.assertIn(url2, crawler.visited)
 
 if __name__ == "__main__":
     unittest.main()  # Run unit tests
