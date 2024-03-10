@@ -8,11 +8,14 @@ class WebCrawler:
         self.index = defaultdict(list)
         self.visited = set()
 
-    def crawl(self, url, base_url=None):
+    def crawl(self, url, base_url=None,depth=0,max_depth=2):
+        if depth>max_depth:
+            return
+        if url.endswith("/"):
+            url = url.rstrip("/")
         if url in self.visited:
             return
         self.visited.add(url)
-
         try:
             response = requests.get(url)
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -22,9 +25,12 @@ class WebCrawler:
                 href = link.get('href')
                 if href:
                     if urlparse(href).netloc:
+# uncomment the following condition to make the function only crawl internal links    
+                        #if href.startswith(base_url or url): 
+                            self.crawl(href, base_url=base_url or url,depth=depth+1,max_depth=max_depth)
+                    if href.startswith("/"):
                         href = urljoin(base_url or url, href)
-                    if href.startswith(base_url or url):
-                        self.crawl(href, base_url=base_url or url)
+                        self.crawl(href, base_url=base_url or url,depth=depth+1,max_depth=max_depth)
         except Exception as e:
             print(f"Error crawling {url}: {e}")
 
@@ -48,7 +54,7 @@ def main():
     start_url = "https://example.com"
     crawler.crawl(start_url)
 
-    keyword = "test"
+    keyword = "this"
     results = crawler.search(keyword)
     crawler.print_results(results)
 

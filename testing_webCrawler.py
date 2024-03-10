@@ -2,9 +2,6 @@ from main import WebCrawler
 import unittest
 from unittest.mock import patch, MagicMock
 import requests
-from bs4 import BeautifulSoup
-from collections import defaultdict
-from urllib.parse import urljoin, urlparse
 
 class WebCrawlerTests(unittest.TestCase):
     @patch('requests.get')
@@ -13,6 +10,7 @@ class WebCrawlerTests(unittest.TestCase):
         <html><body>
             <h1>Welcome!</h1>
             <a href="/about">About Us</a>
+            <a href="https://www.example.com/contact">Contact Us</a>
             <a href="https://www.external.com">External Link</a>
         </body></html>
         """
@@ -21,10 +19,12 @@ class WebCrawlerTests(unittest.TestCase):
         mock_get.return_value = mock_response
 
         crawler = WebCrawler()
-        crawler.crawl("https://example.com")
+        crawler.crawl("https://www.example.com")
 
         # Assert that 'about' was added to visited URLs
-        self.assertIn("https://example.com/about", crawler.visited)
+        self.assertIn("https://www.example.com/about", crawler.visited)
+        self.assertIn("https://www.example.com/contact", crawler.visited)
+        self.assertIn("https://www.external.com", crawler.visited)
 
     @patch('requests.get')
     def test_crawl_error(self, mock_get):
@@ -42,7 +42,7 @@ class WebCrawlerTests(unittest.TestCase):
         crawler.index["page2"] = "No keyword here"
 
         results = crawler.search("keyword")
-        self.assertEqual(results, ["page2"])
+        self.assertEqual(results, ["page1","page2"])
 
     @patch('sys.stdout')
     def test_print_results(self, mock_stdout):
